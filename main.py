@@ -11,6 +11,31 @@ app = ctk.CTk()
 app.title("yt mp3/mp4 downloader")
 app.geometry("800x600")
 
+def update_ui(percent):
+    progress_bar.set(percent)
+    progress_label.configure(text=f"{int(percent * 100)}%")
+
+def show_progress():
+    progress_bar.pack(pady=(20, 5))
+    progress_label.pack()
+
+def hide_progress():
+    progress_bar.pack_forget()
+    progress_label.pack_forget()
+
+def progress_hook(d):
+    if d['status'] == 'downloading':
+        try:
+            total = d.get('total_bytes') or d.get('total_bytes_estimate', 0)
+            if total > 0:
+                downloaded = d.get('downloaded_bytes', 0)
+                percent = downloaded / total
+                app.after(0, update_ui, percent)
+        except Exception:
+            pass
+    elif d['status'] == 'finished':
+        app.after(0, update_ui, 1.0)
+
 def download_video():
     url = entry.get()
     fmt = option.get()
@@ -21,9 +46,8 @@ def download_video():
         return
     
     button.configure(state="disabled", text="Downloading..")
-
-
-# ----- Part done by AI
+    app.after(0, update_ui, 0.0)
+    app.after(0, show_progress)
 
     try:
         downloads_path = os.path.join(os.path.expanduser('~'), 'Downloads')
@@ -35,6 +59,7 @@ def download_video():
                 'outtmpl': output_template,
                 'nocheckcertificate': True,
                 'noplaylist': True,
+                'progress_hooks': [progress_hook],
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
@@ -47,6 +72,7 @@ def download_video():
                 'outtmpl': output_template,
                 'nocheckcertificate': True,
                 'noplaylist': True,
+                'progress_hooks': [progress_hook],
             }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -60,8 +86,8 @@ def download_video():
         
     finally:
         button.configure(state="normal", text="Download")
-
-# -----
+        app.after(0, hide_progress)
+        app.after(0, update_ui, 0.0)
 
     
 def start_download_thread():
@@ -88,6 +114,9 @@ option.set("MP3")
 button = ctk.CTkButton(frame, text="Download", command=start_download_thread)
 button.grid(row=1, column=0, columnspan=2, pady=20)
 
+progress_bar = ctk.CTkProgressBar(app, width=500)
+progress_bar.set(0)
 
+progress_label = ctk.CTkLabel(app, text="0%", font=("Arial", 15))
 
 app.mainloop()
