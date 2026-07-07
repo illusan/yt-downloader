@@ -24,6 +24,7 @@ def download_video():
 
 
 # ----- Part done by AI
+
     try:
         downloads_path = os.path.join(os.path.expanduser('~'), 'Downloads')
         output_template = os.path.join(downloads_path, '%(title)s.%(ext)s')
@@ -33,17 +34,19 @@ def download_video():
                 'format': 'bestaudio/best',
                 'outtmpl': output_template,
                 'nocheckcertificate': True,
+                'noplaylist': True,
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
                     'preferredquality': '192',
                 }],
             }
-        else: # MP4
+        else:
             ydl_opts = {
                 'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
                 'outtmpl': output_template,
                 'nocheckcertificate': True,
+                'noplaylist': True,
             }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -66,9 +69,9 @@ def start_download_thread():
     thread.start()
 
 
-text = ctk.CTkLabel(app, text="YouTube to mp3 / mp4 conventer", font=("Arial", 40))
+text = ctk.CTkLabel(app, text="YouTube to mp3 / mp4 conventer", font=("Arial", 40), bg_color="transparent")
 text.pack(pady=(30, 0))
-text2 = ctk.CTkLabel(app, text="free mp3 and mp4 format converter, compatibile with YouTube", font=("Arial", 17))
+text2 = ctk.CTkLabel(app, text="free mp3 and mp4 format converter, compatibile with YouTube", font=("Arial", 17), bg_color="transparent")
 text2.pack(pady=(5, 0))
 
 
