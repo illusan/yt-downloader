@@ -108,6 +108,10 @@ def start_download_thread():
         messagebox.showerror("ffmpeg not found", "ffmpeg is required for MP3 and MP4 downloads.\nInstall it with: brew install ffmpeg")
         return
 
+    if shutil.which("deno") is None:
+        messagebox.showerror("deno not found", "deno is required, otherwise YouTube blocks downloads (HTTP 403).\nInstall it with: brew install deno")
+        return
+
     button.configure(state="disabled", text="Downloading..")
     set_status("Starting...")
     update_ui(0.0)
