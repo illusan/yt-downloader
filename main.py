@@ -2,7 +2,7 @@ import customtkinter as ctk
 import threading
 import os
 import shutil
-from tkinter import messagebox
+from tkinter import messagebox, PhotoImage
 import yt_dlp
 
 ctk.set_appearance_mode("dark")
@@ -10,6 +10,10 @@ ctk.set_appearance_mode("dark")
 app = ctk.CTk()
 app.title("yt mp3/mp4 downloader")
 app.geometry("800x600")
+
+icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon.png")
+app_icon = PhotoImage(file=icon_path)
+app.iconphoto(True, app_icon)
 
 def update_ui(percent):
     progress_bar.set(percent)
